@@ -3,7 +3,6 @@ window.Vue = require('vue');
 
 import VueRouter from 'vue-router'
 import axios from 'axios'
-import QRious from './../../node_modules/qrious/dist/qrious.js'
 
 import App from './views/App'
 import City from './views/Screen/City'
