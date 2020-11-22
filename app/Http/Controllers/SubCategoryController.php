@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SubCategory;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class SubCategoryController extends Controller
@@ -12,9 +13,15 @@ class SubCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (isset($request->category))
+        {
+            $category = Category::where('slug', $request->category)->first();
+            
+            return response()->json(SubCategory::where('category_id', $category->id)->with('articles')->get());
+        }
+        return response()->json(SubCategory::with('articles')->get());
     }
 
     /**

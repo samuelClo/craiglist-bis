@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\City;
+use App\Models\Category;
+use App\Models\SubCategory;
+
 use Illuminate\Http\Request;
+
 
 class ArticleController extends Controller
 {
@@ -12,9 +17,31 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $city = City::where('slug', $request->city)->first();
+        $category = Category::where('slug', $request->category)->first();
+        if (!isset($request->subcategory))
+        {
+            return response()->json(
+                Article::isPublished()
+                ->where('city_id', $city->id)
+                ->where('category_id', $category->id)
+                ->with('images')
+                ->get()
+            );
+        }
+
+        $subcategory = SubCategory::where('slug', $request->subcategory)->first();
+
+        return response()->json(
+            Article::isPublished()
+            ->where('city_id', $city->id)
+            ->where('category_id', $category->id)
+            ->where('sub_category_id', $subcategory->id)
+            ->with('images')
+            ->get()
+        );
     }
 
     /**
@@ -41,12 +68,11 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function show(Article $article)
+    public function show($slug)
     {
-        //
+        return response()->json(Article::isPublished()->where('slug', $slug)->with('images')->first());
     }
 
     /**
